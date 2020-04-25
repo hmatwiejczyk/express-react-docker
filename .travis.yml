@@ -1,13 +1,14 @@
-sudo: required
 language: generic 
 services:
   - docker
 
 before_install:
   - docker build -t hmatwiejczyk/react-test -f ./frontend/Dockerfile.dev ./frontend
+  - docker build -t hmatwiejczyk/express-test -f ./backend/Dockerfile ./backend
 
 script:
   - docker run -e CI=true hmatwiejczyk/react-test npm test
+  - docker run -e CI=true hmatwiejczyk/express-test npm test
 
 after_success:
   - docker build -t hmatwiejczyk/erd-frontend ./frontend
@@ -17,5 +18,3 @@ after_success:
   - docker push hmatwiejczyk/erd-frontend
   - docker push hmatwiejczyk/erd-backend
   - docker push hmatwiejczyk/erd-nginx
-
-
