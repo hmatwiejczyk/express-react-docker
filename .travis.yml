@@ -1,0 +1,21 @@
+sudo: required
+language: generic 
+services:
+  - docker
+
+before_install:
+  - docker build -t hmatwiejczyk/react-test -f ./frontend/Dockerfile.dev ./frontend
+
+script:
+  - docker run -e CI=true hmatwiejczyk/react-test npm test
+
+after_success:
+  - docker build -t hmatwiejczyk/erd-frontend ./frontend
+  - docker build -t hmatwiejczyk/erd-backend ./backend
+  - docker build -t hmatwiejczyk/erd-nginx ./nginx
+  - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_ID" --password-stdin
+  - docker push hmatwiejczyk/erd-frontend
+  - docker push hmatwiejczyk/erd-backend
+  - docker push hmatwiejczyk/erd-nginx
+
+
